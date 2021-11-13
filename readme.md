@@ -11,7 +11,9 @@ Opinionated defaults to work best with the [kirby-log](https://github.com/bvdput
 - `git submodule add https://github.com/bvdputte/kirby-logbook.git site/plugins/kirby-logbook` or
 - `composer require bvdputte/kirby-logbook`
 
-## Formatting
+## Formatting & access
+
+For now only users with the admin role will be able to open/use the area in the plugin.
 
 Logs from the [kirby-log](https://github.com/bvdputte/kirby-log/) plugin will be output as a table. All other logs will be print as a list of lines.
 
