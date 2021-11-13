@@ -1,0 +1,10 @@
+{
+  "name": "kirby-logbook",
+  "version": "0.0.1",
+  "description": "A Kirby 3 panel plugin to visualise the site/logs folder in the panel.",
+  "author": "@bvdputte",
+  "scripts": {
+    "dev": "npx -y kirbyup src/index.js --watch",
+    "build": "npx -y kirbyup src/index.js"
+  }
+}

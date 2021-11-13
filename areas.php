@@ -24,7 +24,7 @@ return [
                         logbook::checkAccess(kirby()->user());
 
                         return [
-                            'component' => 'k-logbook-view',  //the Vue component can be defined in the `index.js` of your plugin
+                            'component' => 'k-logbook-area',  //the Vue component can be defined in the `index.js` of your plugin
                             'title' => 'LogBook', // the document title for the current view
                             'props' => [
                                 'title' => 'LogBook',
