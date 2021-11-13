@@ -10,9 +10,9 @@
                 <header class="k-system-view-section-header">
                 <k-headline>
                     <select v-model="selectedLogfile" @change="fetchLog($event)">
-                    <option v-for="logfile in logfiles" :key="logfile">
-                        {{logfile}}
-                    </option>
+                        <option v-for="logfile in logfiles" :key="logfile">
+                            {{logfile}}
+                        </option>
                     </select>
                 </k-headline>
                 </header>
@@ -21,29 +21,29 @@
             <section v-if='this.logLinesCount > 0' class="k-system-view-section">
                 <div class="k-system-info-box k-logbook-pane">
                     <template v-if='isKirbyLogPluginLog'>
-                    <table>
-                        <thead>
-                        <tr>
-                            <th class="column-timestamp">Timestamp</th>
-                            <th class="column-level">Level</th>
-                            <th>Entry</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr v-for="line in logLinesSet" :key=line>
-                            <td class="column-timestamp">{{line.timestamp}}</td>
-                            <td class="column-level">{{line.type}}</td>
-                            <td>{{line.content}}</td>
-                        </tr>
-                        </tbody>
-                    </table>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="column-timestamp">Timestamp</th>
+                                    <th class="column-level">Level</th>
+                                    <th>Entry</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="line in logLinesSet" :key=line>
+                                    <td class="column-timestamp">{{line.timestamp}}</td>
+                                    <td class="column-level">{{line.type}}</td>
+                                    <td>{{line.content}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </template>
                     <template v-else>
-                    <ol>
-                        <li v-for="line in logLinesSet" :key=line>
-                            {{line[1]}}
-                        </li>
-                    </ol>
+                        <ol>
+                            <li v-for="line in logLinesSet" :key=line>
+                                {{line[1]}}
+                            </li>
+                        </ol>
                     </template>
                 </div>
 
