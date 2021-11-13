@@ -2,90 +2,90 @@
     <k-inside>
         <k-view class="k-logbook-view">
 
-        <k-header>
-            {{title}}
-        </k-header>
+            <k-header>
+                {{title}}
+            </k-header>
 
-        <section v-if='logfiles.length >0'>
-            <header class="k-system-view-section-header">
-            <k-headline>
-                <select v-model="selectedLogfile" @change="fetchLog($event)">
-                <option v-for="logfile in logfiles" :key="logfile">
-                    {{logfile}}
-                </option>
-                </select>
-            </k-headline>
-            </header>
-        </section>
+            <section v-if='logfiles.length >0'>
+                <header class="k-system-view-section-header">
+                <k-headline>
+                    <select v-model="selectedLogfile" @change="fetchLog($event)">
+                    <option v-for="logfile in logfiles" :key="logfile">
+                        {{logfile}}
+                    </option>
+                    </select>
+                </k-headline>
+                </header>
+            </section>
 
-        <section v-if='this.logLinesCount > 0' class="k-system-view-section">
-            <div class="k-system-info-box k-logbook-pane">
-                <template v-if='isKirbyLogPluginLog'>
-                <table>
-                    <thead>
-                    <tr>
-                        <th class="column-timestamp">Timestamp</th>
-                        <th class="column-level">Level</th>
-                        <th>Entry</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="line in logLinesSet" :key=line>
-                        <td class="column-timestamp">{{line.timestamp}}</td>
-                        <td class="column-level">{{line.type}}</td>
-                        <td>{{line.content}}</td>
-                    </tr>
-                    </tbody>
-                </table>
-                </template>
-                <template v-else>
-                <ol>
-                    <li v-for="line in logLinesSet" :key=line>
-                        {{line[1]}}
-                    </li>
-                </ol>
-                </template>
-            </div>
-
-            <div class="k-logbook-pagination">
-                <div>
-                    Showing {{paginationPage+1}}&nbsp;to&nbsp;{{paginationPageMax}} from {{logLinesCount}} log entries
-                    <div v-if='!hasNextPaginationSet && (logLinesCount >= maxLogLines)'>
-                        ⚠️ Maximum log entries displayed. Increase 'maxLogLines' in LogBook plugin settings, or check log on server for more entries.
-                    </div>
+            <section v-if='this.logLinesCount > 0' class="k-system-view-section">
+                <div class="k-system-info-box k-logbook-pane">
+                    <template v-if='isKirbyLogPluginLog'>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th class="column-timestamp">Timestamp</th>
+                            <th class="column-level">Level</th>
+                            <th>Entry</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="line in logLinesSet" :key=line>
+                            <td class="column-timestamp">{{line.timestamp}}</td>
+                            <td class="column-level">{{line.type}}</td>
+                            <td>{{line.content}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    </template>
+                    <template v-else>
+                    <ol>
+                        <li v-for="line in logLinesSet" :key=line>
+                            {{line[1]}}
+                        </li>
+                    </ol>
+                    </template>
                 </div>
-                <nav class="k-button-group k-prev-next">
-                    <span class="k-button" :data-disabled='!hasPreviousPaginationSet'>
-                        <span v-if='!hasPreviousPaginationSet' class="k-button-icon k-icon k-icon-angle-left">
-                            <svg viewBox="0 0 16 16"><use xlink:href="#icon-angle-left"></use></svg>
-                        </span>
-                        <button v-else class="k-button-icon k-icon k-icon-angle-left" @click="paginationPrevious($event)" aria-label="Previous">
-                            <svg viewBox="0 0 16 16"><use xlink:href="#icon-angle-left"></use></svg>
-                        </button>
-                    </span>
-                    <span class="k-button" :data-disabled='!hasNextPaginationSet'>
-                        <span v-if='!hasNextPaginationSet' class="k-button-icon k-icon k-icon-angle-right">
-                            <svg viewBox="0 0 16 16"><use xlink:href="#icon-angle-right"></use></svg>
-                        </span>
-                        <button v-else class="k-button-icon k-icon k-icon-angle-right" @click="paginationNext($event)" aria-label="Next">
-                            <svg viewBox="0 0 16 16"><use xlink:href="#icon-angle-right"></use></svg>
-                        </button>
-                    </span>
-                </nav>
-            </div>
-        </section>
 
-        <section v-if='(this.logLinesCount == 0) && (logfiles.length != 0)' class="k-system-view-section">
-            <div class="k-system-info-box k-logbook-pane">
-                <p>Empty logfile</p>
-            </div>
-        </section>
+                <div class="k-logbook-pagination">
+                    <div>
+                        Showing {{paginationPage+1}}&nbsp;to&nbsp;{{paginationPageMax}} from {{logLinesCount}} log entries
+                        <div v-if='!hasNextPaginationSet && (logLinesCount >= maxLogLines)'>
+                            ⚠️ Maximum log entries displayed. Increase 'maxLogLines' in LogBook plugin settings, or check log on server for more entries.
+                        </div>
+                    </div>
+                    <nav class="k-button-group k-prev-next">
+                        <span class="k-button" :data-disabled='!hasPreviousPaginationSet'>
+                            <span v-if='!hasPreviousPaginationSet' class="k-button-icon k-icon k-icon-angle-left">
+                                <svg viewBox="0 0 16 16"><use xlink:href="#icon-angle-left"></use></svg>
+                            </span>
+                            <button v-else class="k-button-icon k-icon k-icon-angle-left" @click="paginationPrevious($event)" aria-label="Previous">
+                                <svg viewBox="0 0 16 16"><use xlink:href="#icon-angle-left"></use></svg>
+                            </button>
+                        </span>
+                        <span class="k-button" :data-disabled='!hasNextPaginationSet'>
+                            <span v-if='!hasNextPaginationSet' class="k-button-icon k-icon k-icon-angle-right">
+                                <svg viewBox="0 0 16 16"><use xlink:href="#icon-angle-right"></use></svg>
+                            </span>
+                            <button v-else class="k-button-icon k-icon k-icon-angle-right" @click="paginationNext($event)" aria-label="Next">
+                                <svg viewBox="0 0 16 16"><use xlink:href="#icon-angle-right"></use></svg>
+                            </button>
+                        </span>
+                    </nav>
+                </div>
+            </section>
 
-        <section v-if='logfiles.length == 0' class="k-system-view-section">
-            <div class="k-system-info-box k-logbook-pane">
-                <p>No logfiles found</p>
-            </div>
-        </section>
+            <section v-if='(this.logLinesCount == 0) && (logfiles.length != 0)' class="k-system-view-section">
+                <div class="k-system-info-box k-logbook-pane">
+                    <p>Empty logfile</p>
+                </div>
+            </section>
+
+            <section v-if='logfiles.length == 0' class="k-system-view-section">
+                <div class="k-system-info-box k-logbook-pane">
+                    <p>No logfiles found</p>
+                </div>
+            </section>
 
         </k-view>
     </k-inside>
