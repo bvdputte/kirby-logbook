@@ -1,0 +1,52 @@
+.k-logbook-pane {
+  background-color: #fff;
+  margin-top: 1.5em;
+  overflow-x: scroll;
+}
+
+.k-logbook-pane table {
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.k-logbook-pane > p {
+  padding: .5rem;
+}
+
+.k-logbook-pane table th, .k-logbook-pane table td {
+  padding: .5rem;
+}
+
+.k-logbook-pane table td, .k-logbook-pane > ol > li {
+  padding-top: .25rem;
+  padding-bottom: .25rem;
+}
+
+.k-logbook-pane table tbody tr:first-child td, .k-logbook-pane > ol > li:first-child {
+  padding-top: .5rem;
+}
+
+.k-logbook-pane table tbody tr:last-child td, .k-logbook-pane > ol > li:last-child {
+  padding-bottom: .5rem;
+}
+
+.k-logbook-pane table th {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.k-logbook-pane table tbody tr:nth-of-type(even), .k-logbook-pane > ol > li:nth-of-type(even) {
+  background-color: #f5f5f5;
+}
+
+.k-logbook-pane .column-level, .k-logbook-pane .column-timestamp {
+  width: 1%;
+  padding-right: 1em;
+  white-space: nowrap;
+}
+
+.k-logbook-pagination {
+  font-size: .8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

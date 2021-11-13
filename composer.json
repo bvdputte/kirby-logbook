@@ -1,0 +1,23 @@
+{
+  "name": "bvdputte/kirby-logbook",
+  "description": "A Kirby 3 panel plugin to visualise the `site/logs` folder in the panel.",
+  "license": "MIT",
+  "type": "kirby-plugin",
+  "authors": [
+      {
+          "name": "Bart Vandeputte",
+          "email": "mail@bartvandeputte.be"
+      }
+  ],
+  "keywords": [
+      "kirby3",
+      "kirby3-plugin",
+      "log"
+  ],
+  "require": {
+      "getkirby/composer-installer": "^1.1"
+  },
+  "config": {
+      "optimize-autoloader": true
+  }
+}
