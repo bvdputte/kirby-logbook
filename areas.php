@@ -4,9 +4,7 @@ use bvdputte\kirbyLogbook\logbook;
 
 return [
     'logbook' => function () {
-        $accessPermission = (function() {
-            return logbook::hasAccess(kirby()->user()) ? true : 'disabled';
-        })();
+        $accessPermission = logbook::hasAccess(kirby()->user());
 
         return [
             'label' => 'LogBook', // label for the menu and the breadcrumb
@@ -16,12 +14,15 @@ return [
             //     return 'LogBook';
             // },
             'disabled' => false,
-            'menu' => $accessPermission, // show / hide from the menu
+            'menu' => $accessPermission ? true : 'disabled', // Enable/disable from the menu
             'link' => 'logbook', // link to the main area view
             'views' => [
                 [
                     'pattern' => 'logbook', //`panel` slug is automatically prepended
                     'action' => function () {
+                        // Block unauthorized access
+                        logbook::checkAccess(kirby()->user());
+
                         return [
                             'component' => 'k-logbook-view',  //the Vue component can be defined in the `index.js` of your plugin
                             'title' => 'LogBook', // the document title for the current view

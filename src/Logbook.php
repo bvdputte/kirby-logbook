@@ -1,6 +1,9 @@
 <?php
 
 namespace bvdputte\kirbyLogbook;
+
+use Kirby\Exception\LogicException;
+use Kirby\Exception\PermissionException;
 use Dir;
 
 class Logbook
@@ -140,8 +143,26 @@ class Logbook
 
     public static function hasAccess($user)
     {
-        if ($user === null) return false;
+        if ($user === null) {
+            throw new LogicException([
+                'key'  => 'logbook.internal',
+                'data' => ['code' => 'user-not-logged-in']
+            ]);
+        }
 
         return $user->role()->id() == 'admin';
+    }
+
+
+    public static function checkAccess($user)
+    {
+        if (!self::hasAccess($user)) {
+            throw new PermissionException([
+                'key'  => 'logbook.permission',
+                'data' => ['Only admin roles have access']
+            ]);
+        }
+
+        return true;
     }
 }
