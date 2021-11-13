@@ -7,15 +7,18 @@
             </k-header>
 
             <section v-if='logfiles.length >0'>
-                <header class="k-system-view-section-header">
-                <k-headline>
-                    <select v-model="selectedLogfile" @change="fetchLog($event)">
-                        <option v-for="logfile in logfiles" :key="logfile">
-                            {{logfile}}
-                        </option>
-                    </select>
-                </k-headline>
-                </header>
+                <k-grid gutter="medium">
+                    <k-column width="1/3">
+                        <k-select-field
+                            v-model="selectedLogfile"
+                            :options="logfilesOptions"
+                            :required="true"
+                            @input="fetchLog($event)"
+                            label="Choose logfile"
+                            type="select"
+                            icon="angle-down" />
+                    </k-column>
+                </k-grid>
             </section>
 
             <section v-if='this.logLinesCount > 0' class="k-system-view-section">
@@ -105,8 +108,8 @@ export default {
         'paginationSize'
     ],
     methods: {
-        fetchLog: function(event) {
-            fetch('/kirbylogbook/' + event.target.value)
+        fetchLog: function(logfilename) {
+            fetch('/kirbylogbook/' + logfilename)
             .then(response => response.json())
             .then(data => {
                 this.paginationPage = 0;
@@ -131,6 +134,9 @@ export default {
         }
     },
     computed: {
+        logfilesOptions: function() {
+            return this.logfiles.map(logfilename => ({value: logfilename, text: logfilename}));
+        },
         logLines: function() {
             return this.parseLogLines();
         },
