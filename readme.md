@@ -3,6 +3,8 @@
 A Kirby 3 panel plugin to visualise the `site/logs` folder in the panel.
 Opinionated defaults to work best with the [kirby-log](https://github.com/bvdputte/kirby-log/) plugin.
 
+![Kirby LogBook screenshot](https://user-images.githubusercontent.com/490505/141613064-4afaa26e-5cf9-4d52-8fc4-e8ea0606fb8a.png)
+
 ## Installation
 
 - unzip [master.zip](https://github.com/bvdputte/kirby-logbook/archive/master.zip) as folder `site/plugins/kirby-logbook` or
