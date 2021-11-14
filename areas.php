@@ -30,10 +30,8 @@ return [
                                 'title' => 'LogBook',
                                 'logfiles' => logbook::getLogfiles(),
                                 'selectedLogfile' => logbook::getDefaultLogfile(),
-                                'maxLogLines' => logbook::getMaxLogLines(),
-                                'logData' => logbook::tail(),
                                 'hasKirbyLogPlugin' => logbook::hasKirbyLogPlugin(),
-                                'paginationSize' => logbook::getPaginationSize()
+                                'limit' => logbook::getPaginationSize()
                             ],
                         ];
                     }

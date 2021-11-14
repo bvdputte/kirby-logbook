@@ -6,22 +6,22 @@
                 {{title}}
             </k-header>
 
-            <section v-if='logfiles.length >0'>
+            <section v-if='logfiles.length >0' class="k-logbook-actions">
                 <k-grid gutter="medium">
-                    <k-column width="1/3">
+                    <k-column width="1/3" class="k-logbook-column-select">
                         <k-select-field
                             v-model="selectedLogfile"
                             :options="logfilesOptions"
-                            :required="true"
-                            @input="fetchLog($event)"
-                            label="Choose logfile"
+                            @input="fetch()"
+                            label="Logfile"
+                            name="k-logbook__log-select"
                             type="select"
                             icon="angle-down" />
                     </k-column>
                 </k-grid>
             </section>
 
-            <section v-if='this.logLinesCount > 0' class="k-system-view-section">
+            <section v-if='this.total > 0' class="k-system-view-section">
                 <div class="k-system-info-box k-logbook-pane">
                     <template v-if='isKirbyLogPluginLog'>
                         <table>
@@ -33,60 +33,49 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="line in logLinesSet" :key=line>
-                                    <td class="column-timestamp">{{line.timestamp}}</td>
-                                    <td class="column-level">{{line.type}}</td>
-                                    <td>{{line.content}}</td>
+                                <tr v-for="line in pagedLogLines" :key=line>
+                                    <td class="column-timestamp"><pre>{{line.timestamp}}</pre></td>
+                                    <td class="column-level"><pre>{{line.type}}</pre></td>
+                                    <td><pre>{{line.content}}</pre></td>
                                 </tr>
                             </tbody>
                         </table>
                     </template>
                     <template v-else>
                         <ol>
-                            <li v-for="line in logLinesSet" :key=line>
-                                {{line[1]}}
+                            <li v-for="(line, index) in pagedLogLines" :key="index">
+                                <pre>{{line}}</pre>
                             </li>
                         </ol>
                     </template>
                 </div>
-
-                <div class="k-logbook-pagination">
-                    <div>
-                        Showing {{paginationPage+1}}&nbsp;to&nbsp;{{paginationPageMax}} from {{logLinesCount}} log entries
-                        <div v-if='!hasNextPaginationSet && (logLinesCount >= maxLogLines)'>
-                            ⚠️ Maximum log entries displayed. Increase 'maxLogLines' in LogBook plugin settings, or check log on server for more entries.
-                        </div>
-                    </div>
-                    <nav class="k-button-group k-prev-next">
-                        <span class="k-button" :data-disabled='!hasPreviousPaginationSet'>
-                            <span v-if='!hasPreviousPaginationSet' class="k-button-icon k-icon k-icon-angle-left">
-                                <svg viewBox="0 0 16 16"><use xlink:href="#icon-angle-left"></use></svg>
-                            </span>
-                            <button v-else class="k-button-icon k-icon k-icon-angle-left" @click="paginationPrevious($event)" aria-label="Previous">
-                                <svg viewBox="0 0 16 16"><use xlink:href="#icon-angle-left"></use></svg>
-                            </button>
-                        </span>
-                        <span class="k-button" :data-disabled='!hasNextPaginationSet'>
-                            <span v-if='!hasNextPaginationSet' class="k-button-icon k-icon k-icon-angle-right">
-                                <svg viewBox="0 0 16 16"><use xlink:href="#icon-angle-right"></use></svg>
-                            </span>
-                            <button v-else class="k-button-icon k-icon k-icon-angle-right" @click="paginationNext($event)" aria-label="Next">
-                                <svg viewBox="0 0 16 16"><use xlink:href="#icon-angle-right"></use></svg>
-                            </button>
-                        </span>
-                    </nav>
+                <div class="k-logbook-pane-caption">
+                    <k-grid gutter="medium">
+                        <k-column width="2/3" class="k-logbook-column-pagination-summary">
+                            Showing {{pageStart+1}} to {{pageEnd}} from {{total}} log entries
+                        </k-column>
+                        <k-column width="1/3" class="k-logbook-column-pagination">
+                            <k-pagination
+                                :details="false"
+                                :page="page"
+                                :limit="limit"
+                                :total="total"
+                                @paginate="paginate" />
+                        </k-column>
+                    </k-grid>
                 </div>
+
             </section>
 
-            <section v-if='(this.logLinesCount == 0) && (logfiles.length != 0)' class="k-system-view-section">
-                <div class="k-system-info-box k-logbook-pane">
-                    <p>Empty logfile</p>
+            <section v-if='(this.total == 0) && (logfiles.length != 0)' class="k-system-view-section">
+                <div class="k-system-info-box">
+                    <k-empty icon="book">Logfile is empty</k-empty>
                 </div>
             </section>
 
             <section v-if='logfiles.length == 0' class="k-system-view-section">
-                <div class="k-system-info-box k-logbook-pane">
-                    <p>No logfiles found</p>
+                <div class="k-system-info-box">
+                    <k-empty icon="book">No logfiles found</k-empty>
                 </div>
             </section>
 
@@ -101,86 +90,78 @@ export default {
         'title',
         'logfiles',
         'selectedLogfile',
-        'logData',
-        'maxLogLines',
         'hasKirbyLogPlugin',
-        'paginationPage',
-        'paginationSize'
+        'limit'
     ],
+    data() {
+        return {
+            page: 1,
+            logLines: []
+        };
+    },
     methods: {
-        fetchLog: function(logfilename) {
-            fetch('/kirbylogbook/' + logfilename)
+        fetch: function() {
+            fetch('/kirbylogbook/' + this.selectedLogfile)
             .then(response => response.json())
             .then(data => {
-                this.paginationPage = 0;
-                this.logData = data;
+                // Reset paging
+                this.page = 1;
+                // Parse loglines
+                if (Array.isArray(data)) {
+                    // KirbyLog format
+                    this.logLines = data;
+                } else {
+                    // Can be anything
+                    this.logLines = Object.entries(data).map(item => item[1]);
+                }
             });
         },
-        parseLogLines: function() {
-            var lines;
-            if (Array.isArray(this.logData)) {
-                lines = this.logData;
-            } else {
-                lines = Object.entries(this.logData);
-            }
-            return lines;
-        },
-        // Pagination
-        paginationNext: function(event) {
-            this.paginationPage += this.paginationSize;
-        },
-        paginationPrevious: function(event) {
-            this.paginationPage -= this.paginationSize;
+        paginate: function({page, limit}) {
+            this.page = page;
+            this.limit = limit;
         }
     },
     computed: {
         logfilesOptions: function() {
             return this.logfiles.map(logfilename => ({value: logfilename, text: logfilename}));
         },
-        logLines: function() {
-            return this.parseLogLines();
-        },
         isKirbyLogPluginLog: function() {
-            if (this.logData[0] == undefined) return false;
+            if (this.logLines[0] == undefined) return false;
 
             var kirbyLogSchema = [ "timestamp", "type", "content" ];
             return (this.hasKirbyLogPlugin) &&
-                   (JSON.stringify(Object.keys(this.logData[0])) == JSON.stringify(kirbyLogSchema));
+                   (JSON.stringify(Object.keys(this.logLines[0])) == JSON.stringify(kirbyLogSchema));
         },
-        // Pagination
-        logLinesCount: function() {
-            return this.logLines.length
+        pagedLogLines: function() {
+            return this.logLines.slice(this.pageStart, this.pageEnd);
         },
-        logLinesSet: function() {
-            return this.logLines.slice(this.paginationPage, this.paginationPage+this.paginationSize);
+        total: function() {
+            return this.logLines.length;
         },
-        paginationPageMax: function() {
-            if (this.hasNextPaginationSet) return this.paginationPage+this.paginationSize;
-
-            return this.logLinesCount;
+        pageStart: function() {
+            return (this.page-1) * this.limit;
         },
-        hasPagination: function() {
-            if (this.logLinesCount > this.paginationSize) return true;
-        },
-        hasNextPaginationSet: function() {
-            return ((this.paginationPage+this.paginationSize) < this.logLinesCount);
-        },
-        hasPreviousPaginationSet: function() {
-            return ((this.paginationPage-this.paginationSize) >= 0);
+        pageEnd: function() {
+            var projectedSet = ((this.page-1) * this.limit) + this.limit;
+            if (projectedSet >= this.total) return this.total;
+            return projectedSet;
         }
     },
     created() {
-        this.paginationPage = 0;
+        this.fetch();
     }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .k-logbook {
+    &-actions {
+        margin-bottom: 1.5em;
+    }
     &-pane {
-        background-color: #fff;
-        margin-top: 1.5em;
+        background-color: var(--color-white);
         overflow-x: scroll;
+        box-shadow: var(--shadow);
 
         table {
             border-collapse: collapse;
@@ -207,7 +188,7 @@ export default {
                     padding-bottom: .5rem;
                 }
                 tr:nth-of-type(even) {
-                    background-color: #f5f5f5;
+                    background-color: var(--color-gray-100);
                 }
             }
 
@@ -232,20 +213,39 @@ export default {
                 }
 
                 &:nth-of-type(even) {
-                    background-color: #f5f5f5;
+                    background-color: var(--color-gray-100);
                 }
             }
         }
 
-        & > p {
-            padding: .5rem;
+        &-caption {
+            margin-top: 1em;
         }
     }
-    &-pagination {
-        font-size: .8rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+
+    &-column {
+        &-select {
+            align-self: center;
+        }
+        &-pagination {
+            div .k-pagination {
+                text-align: center;
+
+                @media (screen and min-width: 65em) {
+                    text-align: right;
+                }
+            }
+        }
+        &-pagination-summary {
+            align-self: center;
+            font-size: .8em;
+        }
+    }
+}
+
+.k-field-name-k-logbook__log-select {
+    option[value=""] {
+        display: none;
     }
 }
 </style>
