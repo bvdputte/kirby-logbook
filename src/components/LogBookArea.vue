@@ -18,6 +18,26 @@
                             type="select"
                             icon="angle-down" />
                     </k-column>
+                    <k-column width="1/3" v-if='this.logLevels.length > 1'>
+                        <k-select-field
+                            v-model="filterLevel"
+                            :options="logLevels"
+                            @input="filter()"
+                            label="Level"
+                            type="select"
+                            icon="angle-down" />
+                    </k-column>
+                    <k-column width="1/3">
+                        <k-text-field v-model="filterText"
+                            type="text"
+                            @change="filter()"
+                            label="Search"
+                            placeholder="Search"
+                            icon="search"/>
+                    </k-column>
+                    <k-column v-if='logData.length == maxLogLines'>
+                        <k-info-field v-bind:text="maxLogLinesReachedMessage" />
+                    </k-column>
                 </k-grid>
             </section>
 
@@ -91,12 +111,17 @@ export default {
         'logfiles',
         'selectedLogfile',
         'hasKirbyLogPlugin',
+        'maxLogLines',
         'limit'
     ],
     data() {
         return {
             page: 1,
-            logLines: []
+            logData: [],
+            logLines: [],
+            logLevels: [],
+            filterLevel: '',
+            filterText: ''
         };
     },
     methods: {
@@ -104,17 +129,46 @@ export default {
             fetch('/kirbylogbook/' + this.selectedLogfile)
             .then(response => response.json())
             .then(data => {
-                // Reset paging
+                this.initializeComponent(data);
+            });
+        },
+        initializeComponent: function(data) {
+                // Reset
                 this.page = 1;
+                this.logLevels = [];
+                this.filterLevel = '';
+                this.filterText = '';
                 // Parse loglines
                 if (Array.isArray(data)) {
                     // KirbyLog format
-                    this.logLines = data;
+                    this.logLines = this.logData = data;
+
+                    // Set loglevels filter
+                    // 1. Get all types
+                    var filters = this.logLines.map(line => line.type);
+                    // 2. Make unique
+                    var uniqueFilters = [...new Set(filters)];
+                    this.logLevels = uniqueFilters.map(level => ({value: level, text: level}));
                 } else {
-                    // Can be anything
-                    this.logLines = Object.entries(data).map(item => item[1]);
+                    // Unrecognized log format. Use lines as given.
+                    this.logLines = this.logData = Object.entries(data).map(item => item[1]);
                 }
-            });
+        },
+        filter: function() {
+            var data = this.logData;
+            // Filter via level
+            if (this.filterLevel != '') {
+                data = data.filter( line => line.type == this.filterLevel );
+            }
+            // Filter via text search
+            if (this.filterText != '') {
+                if (this.isKirbyLogPluginLog) {
+                    data = data.filter( line => line.content.includes(this.filterText) );
+                } else {
+                    data = data.filter( line => line.includes(this.filterText) );
+                }
+            }
+            this.logLines = data;
         },
         paginate: function({page, limit}) {
             this.page = page;
@@ -145,6 +199,9 @@ export default {
             var projectedSet = ((this.page-1) * this.limit) + this.limit;
             if (projectedSet >= this.total) return this.total;
             return projectedSet;
+        },
+        maxLogLinesReachedMessage: function() {
+            return '⚠️ Only last ' + this.maxLogLines + ' log lines fetched.<br>Increase threshold to fetch more, or tail log on the server.'
         }
     },
     created() {

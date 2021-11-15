@@ -31,6 +31,7 @@ return [
                                 'logfiles' => logbook::getLogfiles(),
                                 'selectedLogfile' => logbook::getDefaultLogfile(),
                                 'hasKirbyLogPlugin' => logbook::hasKirbyLogPlugin(),
+                                'maxLogLines' => logbook::getMaxLogLines(),
                                 'limit' => logbook::getPaginationSize()
                             ],
                         ];
