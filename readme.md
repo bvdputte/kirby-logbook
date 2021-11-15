@@ -1,7 +1,7 @@
 # Kirby LogBook plugin
 
-A Kirby 3 panel plugin to visualise the `site/logs` folder in the panel.
-Opinionated defaults to work best with the [kirby-log](https://github.com/bvdputte/kirby-log/) plugin.
+A Kirby 3 panel plugin to visualise the `site/logs` folder in the panel.\
+Opinionated defaults to work best with the [kirby-log](https://github.com/bvdputte/kirby-log/) plugin out-of-the-box.
 
 ![Kirby LogBook screenshot](https://user-images.githubusercontent.com/490505/141863354-64864db9-41f8-4fdc-9816-238e2eb352b8.png)
 
@@ -22,17 +22,20 @@ Logs from the [kirby-log](https://github.com/bvdputte/kirby-log/) plugin will be
 All of them are optional.
 
 ```php
-// in site/config/config.php
-'bvdputte.logbook.default' => 'mylog.log', // String. Name of logfile to show by default. Defaults to first.
-'bvdputte.logbook.hide' => ['my-restricted-log.log','some-other-log.log'], // Array with log filenames with no access in panel. Defaults to []
-'bvdputte.logbook.maxLogLines' => 2000, // Integer. For performance reasons, only the x last lines of the log are being fetched and shown. Defaults to 2500
-'bvdputte.logbook.paginationSize' => 50 // Integer. The amount of lines per paginated set in the panel. Defaults to 25
+// in site/config/config.php:
+// String. Name of logfile to show by default. Defaults to first.
+'bvdputte.logbook.default' => 'mylog.log',
+// Array with log filenames with no access in panel. Defaults to []
+'bvdputte.logbook.hide' => ['my-restricted-log.log','some-other-log.log'],
+// Integer. For performance reasons, only the x last lines of the log are being fetched and shown. Defaults to 2500
+'bvdputte.logbook.maxLogLines' => 2000,
+// Integer. The amount of lines per paginated set in the panel. Defaults to 25
+'bvdputte.logbook.paginationSize' => 50
 ```
 
 ## Development info
 
-For development to the vue part, run `npm run dev`
-
+For development to the vue part, run `npm run dev`\
 To build vue sfc, before commit, run `npm run build`
 
 
