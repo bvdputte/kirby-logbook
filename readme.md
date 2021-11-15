@@ -1,4 +1,4 @@
-# Kirby LogBook plugin
+# Kirby LogBook
 
 A Kirby 3 panel plugin to visualise the `site/logs` folder in the panel.\
 Opinionated defaults to work best with the [kirby-log](https://github.com/bvdputte/kirby-log/) plugin out-of-the-box.
@@ -10,6 +10,8 @@ Opinionated defaults to work best with the [kirby-log](https://github.com/bvdput
 - unzip [master.zip](https://github.com/bvdputte/kirby-logbook/archive/master.zip) as folder `site/plugins/kirby-logbook` or
 - `git submodule add https://github.com/bvdputte/kirby-logbook.git site/plugins/kirby-logbook` or
 - `composer require bvdputte/kirby-logbook`
+
+⚠️ You'll need at least Kirby 3.6 to use this plugin.
 
 ## Formatting & access
 
