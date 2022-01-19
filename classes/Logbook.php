@@ -144,10 +144,7 @@ class Logbook
     public static function hasAccess($user)
     {
         if ($user === null) {
-            throw new LogicException([
-                'key'  => 'logbook.internal',
-                'data' => ['code' => 'user-not-logged-in']
-            ]);
+            return false;
         }
 
         return $user->role()->id() == 'admin';
