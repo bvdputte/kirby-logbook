@@ -3,7 +3,7 @@
 A Kirby 3 panel plugin to visualise the `site/logs` folder in the panel.\
 Opinionated defaults to work best with the [kirby-log](https://github.com/bvdputte/kirby-log/) plugin out-of-the-box.
 
-![Kirby LogBook screenshot](https://user-images.githubusercontent.com/490505/141863354-64864db9-41f8-4fdc-9816-238e2eb352b8.png)
+![Kirby LogBook screenshot](https://user-images.githubusercontent.com/490505/169391062-18c95875-8654-458d-bc93-87ff187a35d4.png)
 
 ## Installation
 
@@ -25,6 +25,7 @@ All of them are optional.
 
 ```php
 // in site/config/config.php:
+
 // String. Name of logfile to show by default. Defaults to first.
 'bvdputte.logbook.default' => 'mylog.log',
 // Array with log filenames with no access in panel. Defaults to []
@@ -33,7 +34,8 @@ All of them are optional.
 'bvdputte.logbook.maxLogLines' => 2000,
 // Integer. The amount of lines per paginated set in the panel. Defaults to 25
 'bvdputte.logbook.paginationSize' => 50,
-'bvdputte.logbook.accessRoles' => [] // Array of roles that need access to the logviewer
+// Array of roles that need access to the logviewer
+'bvdputte.logbook.accessRoles' => [] 
 ```
 
 ## Development info
