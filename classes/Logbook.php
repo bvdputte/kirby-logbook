@@ -118,22 +118,30 @@ class Logbook
         }
 
         // Format Kirbylog plugin loglines as columns
+        // Expected format: (['timestamp','type','content'])
         if(self::hasKirbyLogPlugin()) {
             $formattedLogLines = [];
-            foreach($logLines as $logLine) {
-                $formattedLine = explode('] ', $logLine);
+            $extraLines = [];
 
-                // Unexpected format (['timestamp','type','content']), return as lines
-                if (count($formattedLine) != 3) return $logLines;
+            foreach($logLines as $logLine) {
+                // Check format
+                $formattedLine = explode('] ', $logLine);
+                if (count($formattedLine) != 3) {
+                    array_push($extraLines, $logLine);
+                    continue;
+                }
 
                 // Else format each line into 3 columns
                 $formattedObj['timestamp'] = str_replace('[','',$formattedLine[0]);
                 $formattedObj['type'] = str_replace('[','',$formattedLine[1]);
                 $formattedObj['content'] = $formattedLine[2];
+                $formattedObj['extra'] = array_reverse($extraLines);
                 $formattedLogLines[] = $formattedObj;
+
+                $extraLines = [];
             }
 
-            return $formattedLogLines;
+            if (!empty($formattedLogLines)) return $formattedLogLines;
         }
 
         return $logLines;

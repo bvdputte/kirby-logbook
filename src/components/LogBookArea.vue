@@ -52,12 +52,33 @@
                                     <th>Entry</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr v-for="line in pagedLogLines" :key=line>
+                            <tbody v-for="line in pagedLogLines" :key=line>
+                                <tr>
                                     <td class="column-timestamp"><pre>{{line.timestamp}}</pre></td>
                                     <td class="column-level"><pre>{{line.type}}</pre></td>
-                                    <td><pre>{{line.content}}</pre></td>
+                                    <template v-if='line.extra != ""'>
+                                        <td class="column-entry column-entry__with-extras">
+                                            <span class="extras-trigger" @click="showExtras($event)">
+                                                <k-icon type="add" />
+                                            </span>
+                                            <pre>{{line.content}}</pre>
+                                        </td>
+                                    </template>
+                                    <template v-else>
+                                        <td class="column-entry">
+                                            <pre>{{line.content}}</pre>
+                                        </td>
+                                    </template>
                                 </tr>
+                                <template v-if='line.extra != ""'>
+                                    <tr class="line-with-extras--hidden">
+                                        <td colspan="3">
+                                            <ol class='line__extras'>
+                                                <li v-for="(extra, index) in line.extra" :key="index">{{extra}}</li>
+                                            </ol>
+                                        </td>
+                                    </tr>
+                                </template>
                             </tbody>
                         </table>
                     </template>
@@ -87,9 +108,15 @@
 
             </section>
 
-            <section v-if='(this.total == 0) && (logfiles.length != 0)' class="k-system-view-section">
+            <section v-if='(this.logData.length == 0) && (logfiles.length != 0)' class="k-system-view-section">
                 <div class="k-system-info-box">
                     <k-empty icon="book">Logfile is empty</k-empty>
+                </div>
+            </section>
+
+            <section v-if='(this.logData.length > 0) && (this.total == 0) && (logfiles.length != 0)' class="k-system-view-section">
+                <div class="k-system-info-box">
+                    <k-empty icon="book">No matches found</k-empty>
                 </div>
             </section>
 
@@ -150,7 +177,7 @@ export default {
                     var uniqueFilters = [...new Set(filters)];
                     this.logLevels = uniqueFilters.map(level => ({value: level, text: level}));
                 } else {
-                    // Unrecognized log format. Use lines as given.
+                    // Unrecognized log format.
                     this.logLines = this.logData = Object.entries(data).map(item => item[1]);
                 }
         },
@@ -173,6 +200,10 @@ export default {
         paginate: function({page, limit}) {
             this.page = page;
             this.limit = limit;
+        },
+        showExtras: function(event){
+            let row = event.target.closest("tr");
+            row.closest("table").rows[ row.rowIndex + 1 ].classList.toggle('line-with-extras--hidden')
         }
     },
     computed: {
@@ -180,11 +211,11 @@ export default {
             return this.logfiles.map(logfilename => ({value: logfilename, text: logfilename}));
         },
         isKirbyLogPluginLog: function() {
-            if (this.logLines[0] == undefined) return false;
+            if (this.logData.length == 0) return false;
 
-            var kirbyLogSchema = [ "timestamp", "type", "content" ];
+            var kirbyLogSchema = [ "timestamp", "type", "content", "extra" ];
             return (this.hasKirbyLogPlugin) &&
-                   (JSON.stringify(Object.keys(this.logLines[0])) == JSON.stringify(kirbyLogSchema));
+                   (JSON.stringify(Object.keys(this.logData[0])) == JSON.stringify(kirbyLogSchema));
         },
         pagedLogLines: function() {
             return this.logLines.slice(this.pageStart, this.pageEnd);
@@ -244,20 +275,33 @@ export default {
                 tr:last-child td {
                     padding-bottom: .5rem;
                 }
-                tr:nth-of-type(even) {
+                &:nth-of-type(even) {
                     background-color: var(--color-gray-100);
                 }
             }
 
-            .column-level, .column-timestamp {
-                width: 1%;
-                padding-right: 1em;
-                white-space: nowrap;
+            .column {
+                &-level, &-timestamp {
+                    width: 1%;
+                    padding-right: 1em;
+                    white-space: nowrap;
+                }
+
+                &-entry {
+                    &__with-extras {
+                        display: flex;
+                        gap: .5em;
+
+                        .extras-trigger {
+                            cursor: pointer;
+                        }
+                    }
+                }
             }
         }
 
         ol {
-            li {
+            & > li {
                 padding-top: .25rem;
                 padding-bottom: .25rem;
 
@@ -278,6 +322,40 @@ export default {
         &-caption {
             margin-top: 1em;
         }
+
+        .line {
+            &-with-extras--hidden {
+                display: none;
+            }
+            &__with-extras {
+                position: relative;
+                cursor: pointer;
+
+                &:after {
+                    content: "";
+                    position: absolute;
+                    z-index: 1;
+                    bottom: 0;
+                    left: .3em;
+                    pointer-events: none;
+                    background-image: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255, 1) 88%);
+                    width: calc(100% + 1px);
+                }
+            }
+
+            &__extras {
+                overflow: hidden;
+                margin-left: .3em;
+                border-left: 1px solid var(--color-gray-200);
+                padding-left: .5em;
+                color: var(--color-gray-600);
+
+                & > li {
+                    padding: 0;
+                    background-color: transparent !important;
+                }
+            }
+        }
     }
 
     &-column {
@@ -288,7 +366,7 @@ export default {
             div .k-pagination {
                 text-align: center;
 
-                @media (screen and min-width: 65em) {
+                @media (screen) and (min-width: 65em) {
                     text-align: right;
                 }
             }
