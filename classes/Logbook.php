@@ -155,7 +155,11 @@ class Logbook
             return false;
         }
 
-        return $user->role()->id() == 'admin';
+        $roles = option('bvdputte.logbook.accessRoles');
+        // admin has always access
+        if(!in_array('admin', $roles)) array_push($roles, 'admin');
+
+        return in_array($user->role()->id(), $roles);
     }
 
 

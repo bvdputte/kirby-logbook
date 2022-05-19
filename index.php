@@ -27,7 +27,8 @@ Kirby::plugin('bvdputte/logbook', [
         'default' => '',
         'hide' => [],
         'maxLogLines' => 2500,
-        'paginationSize' => 25
+        'paginationSize' => 25,
+        'accessRoles' => [] // admin has always access
     ],
     'areas' => require_once __DIR__ . '/areas.php',
     'routes' => require_once __DIR__ . '/routes.php'

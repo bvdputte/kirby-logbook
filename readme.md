@@ -32,7 +32,8 @@ All of them are optional.
 // Integer. For performance reasons, only the x last lines of the log are being fetched and shown. Defaults to 2500
 'bvdputte.logbook.maxLogLines' => 2000,
 // Integer. The amount of lines per paginated set in the panel. Defaults to 25
-'bvdputte.logbook.paginationSize' => 50
+'bvdputte.logbook.paginationSize' => 50,
+'bvdputte.logbook.accessRoles' => [] // Array of roles that need access to the logviewer
 ```
 
 ## Development info
