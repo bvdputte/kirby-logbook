@@ -3,7 +3,7 @@
   "description": "A Kirby 3 panel plugin to visualise the `site/logs` folder in the panel.",
   "license": "MIT",
   "type": "kirby-plugin",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "authors": [
       {
           "name": "Bart Vandeputte",
