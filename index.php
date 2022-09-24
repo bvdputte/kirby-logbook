@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . DS . "classes" . DS . "Logbook.php";
+require __DIR__ . "/classes/Logbook.php";
 
 use Kirby\Cms\App;
 use Kirby\Exception\Exception;
