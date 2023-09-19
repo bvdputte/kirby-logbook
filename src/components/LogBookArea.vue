@@ -153,7 +153,7 @@ export default {
     },
     methods: {
         fetch: function() {
-            fetch('/kirbylogbook/' + this.selectedLogfile)
+            fetch(this.$urls.site + '/kirbylogbook/' + this.selectedLogfile)
             .then(response => response.json())
             .then(data => {
                 this.initializeComponent(data);
