@@ -1,13 +1,13 @@
 <template>
-    <k-inside>
-        <k-view class="k-logbook-view">
+    <k-panel-inside>
+        <div class="k-logbook-view">
 
-            <k-header>
-                {{title}}
+            <k-header> 
+                {{title}} 
             </k-header>
 
             <section v-if='logfiles.length >0' class="k-logbook-actions">
-                <k-grid gutter="medium">
+                <k-grid variant="columns">
                     <k-column width="1/3" class="k-logbook-column-select">
                         <k-select-field
                             v-model="selectedLogfile"
@@ -91,7 +91,7 @@
                     </template>
                 </div>
                 <div class="k-logbook-pane-caption">
-                    <k-grid gutter="medium">
+                    <k-grid variant="columns">
                         <k-column width="2/3" class="k-logbook-column-pagination-summary">
                             Showing {{pageStart+1}} to {{pageEnd}} from {{total}} log entries
                         </k-column>
@@ -126,8 +126,8 @@
                 </div>
             </section>
 
-        </k-view>
-    </k-inside>
+        </div>
+    </k-panel-inside>
 </template>
 
 <script>
