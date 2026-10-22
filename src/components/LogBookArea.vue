@@ -1,6 +1,6 @@
 <template>
-    <k-inside>
-        <k-view class="k-logbook-view">
+    <k-panel-inside>
+        <div class="k-logbook-view">
 
             <k-header>
                 {{title}}
@@ -126,8 +126,8 @@
                 </div>
             </section>
 
-        </k-view>
-    </k-inside>
+        </div>
+    </k-panel-inside>
 </template>
 
 <script>
